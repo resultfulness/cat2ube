@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>cat2ube</title>
+
+        <script defer type="module" src="/static/script.js"></script>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        <main>
+            <header>
+                <h1>cat2ube</h1>
+            </header>
+            <section class="download">
+                <form class="download-form" action="javascript:void(0);">
+                    <input
+                        type="text"
+                        name="url"
+                        placeholder="yt url..."
+                        class="download-form__input"
+                    >
+                    <button class="download-form__submit">submit</button>
+                </form>
+            </section>
+            <section class="progress">
+                <h2>download</h2>
+                <p class="progress-name"></p>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill"></div>
+                </div>
+            </section>
+            <section class="info">
+                <h2>info</h2>
+                <div class="info-area">
+                    <div class="info-content"></div>
+                </div>
+            </section>
+            <section class="queue">
+                <h2>queue</h2>
+                <ul class="queue-list"></ul>
+            </section>
+        </main>
+    </body>
+</html>
