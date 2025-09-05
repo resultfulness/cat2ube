@@ -21,13 +21,6 @@ const events = {
     },
     oninfo(data) {
         app.info.insert(data.message);
-        if (data.message.startsWith("[download] Destination: ")) {
-            const m = /\[download\] Destination: videos\/(.*)(\[.*\].f.*\..*)/
-            const name = data.message.match(m)[1];
-            if (data.id) {
-                app.queue.setText(data.id, name);
-            }
-        }
     },
     onmetadata(data) {
         let [thumbnailSrc, ...title] = data.message.split(" ")

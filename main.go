@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 type App struct {
@@ -68,9 +69,30 @@ func (a *App) handleDownload(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	binaryPath := os.Getenv("YTDLP_PATH")
+	outputPath := os.Getenv("OUTPUT_PATH")
+	if len(binaryPath) < 1 && len(outputPath) < 1 {
+		panic("path env vars required")
+	}
+
+	if stat, err := os.Stat(binaryPath); err != nil {
+		panic("binary error, probably doesn't exist")
+	} else {
+		if stat.Mode()&0111 == 0 {
+			panic("binary not executable")
+		}
+	}
+	if stat, err := os.Stat(outputPath); err != nil {
+		panic("output path error, probably doesn't exist")
+	} else {
+		if !stat.Mode().IsDir() {
+			panic("output path not a directory")
+		}
+	}
+
 	var broker = events.NewBroker()
 	var queue = NewDownloadQueue()
-	var manager = ProcessManager{&broker}
+	var manager = ProcessManager{&broker, outputPath, binaryPath}
 	app := App{&broker, &queue, &manager}
 	app.queue.StartBackgroundProcess(app.manager.ProcessDownload)
 

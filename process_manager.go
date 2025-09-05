@@ -11,11 +11,13 @@ import (
 
 type ProcessManager struct {
 	broker *events.EventBroker
+	outputPath string
+	binaryPath string
 }
 
 func (pm *ProcessManager) GetMetadata(dl *Download) {
 	cmd := exec.Command(
-		"./yt-dlp",
+		pm.binaryPath,
 		"--print", "title",
 		"--print", "thumbnail",
 		dl.Url,
@@ -37,8 +39,8 @@ func (pm *ProcessManager) ProcessDownload(dl *Download) {
 	pm.broker.Publish(events.EventTypeRunning, dl.ID, "0%")
 
 	cmd := exec.Command(
-		"./yt-dlp",
-		"-o", "videos/%(title)s[%(id)s].%(ext)s",
+		pm.binaryPath,
+		"-o", pm.outputPath + "/%(title)s[%(id)s].%(ext)s",
 		"--newline",
 		"--progress",
 		"--progress-template", "%(progress._percent_str)s",
