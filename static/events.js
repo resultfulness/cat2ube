@@ -1,80 +1,30 @@
 const events = {
-    init(e) {
-        const queueList = document.querySelector(".queue-list");
-        const data = JSON.parse(e.data);
-
-        if (!data.downloadList) {
-            return;
-        }
-
+    init(data) {
         for (const dl of data.downloadList) {
-            const li = document.createElement("li");
-            li.textContent = dl.url;
-            queueList.append(li);
+            app.queue.add(dl.id, dl.url);
         }
     },
-    onqueued(e) {
-        const queueList = document.querySelector(".queue-list");
-        const data = JSON.parse(e.data);
-
-        if (!data.id && !data.message) {
-            return;
-        }
-
-        const li = document.createElement("li");
-        li.classList.add(`queued-${data.id}`)
-        li.textContent = data.message;
-        queueList.append(li);
+    onqueued(data) {
+        app.queue.add(data.id, data.message);
     },
-    onrunning(e) {
-        const progressBar = document.querySelector(".progress-bar-fill");
-        const data = JSON.parse(e.data);
-        if (!data.id && !data.message) {
-            return;
-        }
-        progressBar.style.width = parseInt(data.message.replace("%", "")) + "%"
+    onrunning(data) {
+        app.progress.set(data.message);
     },
-    oncompleted(e) {
-        const queueList = document.querySelector(".queue-list")
-        const data = JSON.parse(e.data);
-        if (!data.id) {
-            return;
-        }
-        queueList.querySelector(`.queued-${data.id}`).remove();
-
+    oncompleted(data) {
+        app.queue.del(data.id);
     },
-    onfailed(e) {
-        const progressBar = document.querySelector(".progress-bar-fill");
-        progressBar.style.width = "0%";
-        const data = JSON.parse(e.data);
-        if (data.message) {
-            const infoContent = document.querySelector(".info-content");
-            const d = document.createElement("div");
-            d.textContent = "[error] " + data.message;
-            d.style.color = "tomato";
-            infoContent.insertBefore(d, infoContent.firstChild);
-        }
-        if (data.id) {
-            const queueList = document.querySelector(".queue-list");
-            queueList.querySelector(`.queued-${data.id}`).remove();
-        }
+    onfailed(data) {
+        app.progress.reset();
+        app.info.insertError(data.message);
+        app.queue.del(data.id);
     },
-    oninfo(e) {
-        const infoContent = document.querySelector(".info-content");
-        const data = JSON.parse(e.data);
-        if (!data.message) {
-            return;
-        }
-        const d = document.createElement("div");
-        d.textContent = data.message;
-        infoContent.insertBefore(d, infoContent.firstChild);
-
+    oninfo(data) {
+        app.info.insert(data.message);
         if (data.message.startsWith("[download] Destination: ")) {
             const m = /\[download\] Destination: videos\/(.*)(\[.*\].f.*\..*)/
             const name = data.message.match(m)[1];
             if (data.id) {
-                const queueList = document.querySelector(".queue-list")
-                queueList.querySelector(`.queued-${data.id}`).textContent = name;
+                app.queue.setText(data.id, name);
             }
         }
     },
