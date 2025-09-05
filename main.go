@@ -62,6 +62,9 @@ func (a *App) handleDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	a.broker.Publish(events.EventTypeQueued, dl.ID, dl.Url)
+	go func() {
+		a.manager.GetMetadata(dl)
+	}()
 }
 
 func main() {

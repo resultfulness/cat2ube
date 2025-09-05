@@ -10,17 +10,25 @@ document.addEventListener("DOMContentLoaded", () => {
         element: $(".queue-list"),
         children: new Map(),
         add(id, text) {
-            const li = document.createElement("li");
-            li.textContent = text;
-            this.children.set(id, li);
-            this.element.append(li);
+            const queueElement = document.createElement("queue-element");
+            this.children.set(id, queueElement);
+            this.element.append(queueElement);
+            queueElement.setUrlText(text)
         },
         del(id) {
-            this.children.get(id).remove();
+            const c = this.children.get(id)
+            if (c) c.remove();
             this.children.delete(id);
         },
         setText(id, text) {
-            this.children.get(id).textContent = text;
+            const c = this.children.get(id)
+            if (c) c.textContent = text;
+        },
+        setMetadata(id, title, thumbnailSrc) {
+            const queueElement = this.children.get(id);
+            if (!queueElement) return;
+            queueElement.setTitleText(title)
+            queueElement.setImgSrc(thumbnailSrc)
         }
     };
     app.progress = {
@@ -62,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     app.eventSource.listen("completed", app.events.oncompleted);
     app.eventSource.listen("failed", app.events.onfailed);
     app.eventSource.listen("info", app.events.oninfo);
+    app.eventSource.listen("metadata", app.events.onmetadata);
 
     app.downloadForm.addEventListener("submit", e => {
         e.preventDefault();

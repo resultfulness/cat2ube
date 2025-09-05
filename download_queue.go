@@ -6,35 +6,37 @@ import (
 )
 
 type Download struct {
-	ID  int    `json:"id"`
-	Url string `json:"url"`
+	ID           int    `json:"id"`
+	Url          string `json:"url"`
+	Title        string `json:"title"`
+	ThumbnailSrc string `json:"thumbnailSrc"`
 }
 
 type DownloadQueue struct {
 	downloads    chan *Download
-	DownloadList []Download `json:"downloadList"`
+	DownloadList []*Download `json:"downloadList"`
 	current      *Download
 	maxID        int
 }
 
 func NewDownloadQueue() DownloadQueue {
 	return DownloadQueue{
-		downloads: make(chan *Download, 10),
-		DownloadList: make([]Download, 0, 10),
+		downloads:    make(chan *Download, 10),
+		DownloadList: make([]*Download, 0, 10),
 	}
 }
 
-func (dq *DownloadQueue) Enqueue(url string) (Download, error) {
+func (dq *DownloadQueue) Enqueue(url string) (*Download, error) {
 	dq.maxID += 1
-	dl := Download{dq.maxID, url}
+	dl := Download{ID: dq.maxID, Url: url}
 
 	select {
 	case dq.downloads <- &dl:
 	default:
-		return dl, errors.New("download queue full")
+		return &dl, errors.New("download queue full")
 	}
-	dq.DownloadList = append(dq.DownloadList, dl)
-	return dl, nil
+	dq.DownloadList = append(dq.DownloadList, &dl)
+	return &dl, nil
 }
 
 func (dq *DownloadQueue) StartBackgroundProcess(run func(*Download)) {

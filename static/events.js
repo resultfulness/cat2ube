@@ -2,6 +2,7 @@ const events = {
     init(data) {
         for (const dl of data.downloadList) {
             app.queue.add(dl.id, dl.url);
+            app.queue.setMetadata(dl.id, dl.title, dl.thumbnailSrc);
         }
     },
     onqueued(data) {
@@ -28,6 +29,11 @@ const events = {
             }
         }
     },
+    onmetadata(data) {
+        let [thumbnailSrc, ...title] = data.message.split(" ")
+        title = title.join(" ")
+        app.queue.setMetadata(data.id, title, thumbnailSrc);
+    }
 };
 
 export default events;

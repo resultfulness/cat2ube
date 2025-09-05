@@ -13,19 +13,36 @@ type ProcessManager struct {
 	broker *events.EventBroker
 }
 
+func (pm *ProcessManager) GetMetadata(dl *Download) {
+	cmd := exec.Command(
+		"./yt-dlp",
+		"--print", "title",
+		"--print", "thumbnail",
+		dl.Url,
+	)
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("cmd error: %s\n", err.Error())
+		pm.broker.Publish(events.EventTypeFailed, dl.ID, err.Error())
+	}
+	lines := strings.Split(string(out), "\n")
+	dl.Title = lines[0]
+	dl.ThumbnailSrc = lines[1]
+	log.Printf("got metadata: title %s, thumbnail %s\n", dl.Title, dl.ThumbnailSrc)
+	pm.broker.Publish(events.EventTypeMetadata, dl.ID, dl.ThumbnailSrc + " " + dl.Title)
+}
+
 func (pm *ProcessManager) ProcessDownload(dl *Download) {
 	pm.broker.Publish(events.EventTypeRunning, dl.ID, "0%")
 
 	cmd := exec.Command(
 		"./yt-dlp",
-		"-o",
-		"videos/%(title)s[%(id)s].%(ext)s",
+		"-o", "videos/%(title)s[%(id)s].%(ext)s",
 		"--newline",
 		"--progress",
-		"--progress-template",
-		"%(progress._percent_str)s",
-		"--progress-delta",
-		"1",
+		"--progress-template", "%(progress._percent_str)s",
+		"--progress-delta", "1",
 		dl.Url,
 	)
 

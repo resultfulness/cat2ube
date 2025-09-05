@@ -13,6 +13,7 @@ const (
 	EventTypeCompleted
 	EventTypeFailed
 	EventTypeInfo
+	EventTypeMetadata
 )
 
 func (et EventType) toString() string {
@@ -27,6 +28,8 @@ func (et EventType) toString() string {
 		return "cattube:failed"
 	case EventTypeInfo:
 		return "cattube:info"
+	case EventTypeMetadata:
+		return "cattube:metadata"
 	default:
 		panic("invalid event type")
 	}
