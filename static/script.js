@@ -5,7 +5,9 @@ window.$ = s => document.querySelector(s);
 
 document.addEventListener("DOMContentLoaded", () => {
     app.events = events;
-    app.downloadForm = $(".download-form"),
+    app.downloadForm = $(".download-form");
+    app.downloadFormInput = $(".download-form__input");
+    app.downloadFormClear = $(".download-form__clear");
     app.queue = {
         element: $(".queue-list"),
         children: new Map(),
@@ -72,18 +74,29 @@ document.addEventListener("DOMContentLoaded", () => {
     app.eventSource.listen("info", app.events.oninfo);
     app.eventSource.listen("metadata", app.events.onmetadata);
 
-    app.downloadForm.addEventListener("submit", e => {
+    app.downloadForm.addEventListener("submit", async e => {
         e.preventDefault();
 
-        const url = e.target.querySelector(".download-form__input").value;
+        if (!app.downloadFormInput.value) {
+            app.downloadFormInput.value = await navigator.clipboard.readText()
+        }
+        const url = app.downloadFormInput.value;
+
         const d = new FormData();
         d.append("url", url);
 
-        fetch("/download", {
-            method: "POST",
-            body: d
-        }).catch(e => console.error(e));
+        try {
+            await fetch("/download", {
+                method: "POST",
+                body: d
+            });
+        } catch (e) {
+            console.error(e);
+        }
     });
+    app.downloadFormClear.addEventListener("click", e => {
+        app.downloadFormInput.value = "";
+    })
 });
 
 window.addEventListener("beforeunload", (e) => {

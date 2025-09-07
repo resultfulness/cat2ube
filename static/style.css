@@ -31,8 +31,25 @@ h1 {
     gap: 0.5rem;
 }
 
-.download-form__input {
+.download-form__input-group {
     flex: 1;
+    display: grid;
+    position: relative;
+}
+
+.download-form__clear {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 0 1rem;
+    background-color: transparent;
+    border: 0;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.download-form__input {
     padding: 0.5rem 1rem;
     border: 1px solid tomato;
     border-radius: 0.5rem;
@@ -46,6 +63,7 @@ h1 {
     background-color: tomato;
     color: #171717;
     font-weight: 500;
+    cursor: pointer;
 }
 
 .progress-bar {
