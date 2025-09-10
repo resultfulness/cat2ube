@@ -1,0 +1,39 @@
+{
+    "name": "cat2ube",
+    "short_name": "cat2ube",
+    "description": "cat2ube",
+    "start_url": "/",
+    "theme_color": "#ff6347",
+    "background_color": "#ff6347",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "/static/favicon.ico",
+            "sizes": "48x48"
+        },
+        {
+            "src": "/static/icons/android-launchericon-512-512.png",
+            "sizes": "512x512"
+        },
+        {
+            "src": "/static/icons/android-launchericon-192-192.png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/static/icons/android-launchericon-144-144.png",
+            "sizes": "144x144"
+        },
+        {
+            "src": "/static/icons/android-launchericon-96-96.png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "/static/icons/android-launchericon-72-72.png",
+            "sizes": "72x72"
+        },
+        {
+            "src": "/static/icons/android-launchericon-48-48.png",
+            "sizes": "48x48"
+        }
+    ]
+}
