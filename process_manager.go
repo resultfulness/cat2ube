@@ -41,12 +41,15 @@ func (pm *ProcessManager) ProcessDownload(dl *Download) {
 	cmd := exec.Command(
 		pm.binaryPath,
 		"-o", pm.outputPath + "/%(title)s[%(id)s].%(ext)s",
+		"-o", "thumbnail:" + pm.outputPath + "/%(title)s[%(id)s]-poster.%(ext)s",
 		"--newline",
 		"--progress",
 		"--progress-template", "%(progress._percent_str)s",
 		"--progress-delta", "1",
+		"--write-thumbnail",
+		"--convert-thumbnails", "jpg",
 		dl.Url,
-	)
+		)
 
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
